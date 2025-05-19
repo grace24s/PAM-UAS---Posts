@@ -12,21 +12,21 @@ fun AppNavGraph(
     repository: DelcomRepository,
     navController: NavHostController,
     token: String,
-    onTokenChange: () -> Unit
+    onTokenChange: (String) -> Unit // <-- ubah jadi menerima token baru
 ) {
-    val navController = rememberNavController()
-    var token by remember { mutableStateOf<String?>(null) }
+    // Hapus ini: val navController = rememberNavController()
+    // Hapus ini: var token by remember { mutableStateOf<String?>(null) }
 
     NavHost(
         navController = navController,
-        startDestination = if (token == null) "login" else "posts"
+        startDestination = if (token.isEmpty()) "login" else "posts"
     ) {
         composable("login") {
             LoginScreen(
                 navController = navController,
                 repository = repository,
-                onLoginSuccess = {
-                    token = it
+                onLoginSuccess = { newToken ->
+                    onTokenChange(newToken) // <- gunakan fungsi yang dikirim dari MainActivity
                     navController.navigate("posts") {
                         popUpTo("login") { inclusive = true }
                     }
@@ -42,21 +42,21 @@ fun AppNavGraph(
         }
 
         composable("posts") {
-            token?.let {
+            if (token.isNotEmpty()) {
                 PostListScreen(
                     navController = navController,
                     repository = repository,
-                    token = it
+                    token = token
                 )
             }
         }
 
         composable("create_post") {
-            token?.let {
+            if (token.isNotEmpty()) {
                 PostCreateScreen(
                     navController = navController,
                     repository = repository,
-                    token = it
+                    token = token
                 )
             }
         }
@@ -69,11 +69,11 @@ fun AppNavGraph(
         ) { backStackEntry ->
             val postId = backStackEntry.arguments?.getString("postId") ?: ""
             val caption = backStackEntry.arguments?.getString("caption") ?: ""
-            token?.let {
+            if (token.isNotEmpty()) {
                 PostEditScreen(
                     navController = navController,
                     repository = repository,
-                    token = it,
+                    token = token,
                     postId = postId,
                     initialCaption = caption
                 )
@@ -81,3 +81,4 @@ fun AppNavGraph(
         }
     }
 }
+
