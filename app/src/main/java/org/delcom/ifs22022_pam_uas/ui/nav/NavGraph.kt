@@ -9,7 +9,10 @@ import org.delcom.ifs22022_pam_uas.ui.screen.posts.*
 
 @Composable
 fun AppNavGraph(
-    repository: DelcomRepository
+    repository: DelcomRepository,
+    navController: NavHostController,
+    token: String,
+    onTokenChange: () -> Unit
 ) {
     val navController = rememberNavController()
     var token by remember { mutableStateOf<String?>(null) }
