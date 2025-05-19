@@ -1,10 +1,9 @@
 package org.delcom.ifs22022_pam_uas.data.api
 
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.*
 import org.delcom.ifs22022_pam_uas.data.model.*
+import java.io.File
 
 interface ApiService {
     @POST("auth/login")
@@ -20,8 +19,8 @@ interface ApiService {
     @POST("posts")
     suspend fun createPost(
         @Header("Authorization") token: String,
-        @Part("caption") caption: RequestBody,
-        @Part image: MultipartBody.Part
+        @Part("caption") caption: String,
+        @Part image: File
     ): Response<Post>
 
     @PUT("posts/{id}")
